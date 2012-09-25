@@ -5,7 +5,7 @@ using NServiceBus.Unicast.Transport.Transactional;
 namespace MyServer.Common
 {
     using NServiceBus;
-
+    /*
     internal class TransactionalTransportFailedMessageMonitor : IWantToRunWhenTheBusStarts
 
     {                    
@@ -24,5 +24,5 @@ namespace MyServer.Common
         public void Stop()
         {
         }
-    }
+    }*/
 }

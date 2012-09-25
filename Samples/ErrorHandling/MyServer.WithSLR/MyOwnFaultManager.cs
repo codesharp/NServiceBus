@@ -6,6 +6,7 @@ using NServiceBus.Unicast.Transport;
 
 namespace MyServer
 {
+
     public class MyOwnFaultManager : IManageMessageFailures, INeedInitialization
     {
         public void SerializationFailedForMessage(TransportMessage message, Exception e)

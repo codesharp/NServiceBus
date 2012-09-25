@@ -3,6 +3,8 @@ using NServiceBus;
 
 namespace MyServer.Common
 {
+    using System.Threading.Tasks;
+
     public class Application : IWantToRunAtStartup
     {
         public IBus Bus { get; set; }        
@@ -21,8 +23,12 @@ namespace MyServer.Common
                 switch (cmd)
                 {
                     case "s":
-                        var m = new MyMessage{Id = Guid.NewGuid()};
-                        Bus.Send("myserver",m);
+                        Console.Out.WriteLine("Sending...");
+                        Parallel.For(0, 100, i =>
+                            {
+                                var m = new MyMessage {Id = Guid.NewGuid()};
+                                Bus.SendLocal(m);
+                            });
                         break;
                 }                
             }
