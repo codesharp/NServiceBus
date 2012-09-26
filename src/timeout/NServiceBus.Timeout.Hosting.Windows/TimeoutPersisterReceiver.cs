@@ -85,7 +85,7 @@ namespace NServiceBus.Timeout.Hosting.Windows
 
                         var message = CreateTransportMessage(timeoutData.Item1);
                         MessageSender.Send(message, TimeoutDispatcherProcessor.TimeoutDispatcherAddress);
-                        Logger2.DebugFormat("TimeoutId={0}, MessageId={1}, DispatchMessageId={2}", timeoutData.Item1, message.Id, message.IdForCorrelation);
+                        Logger2.DebugFormat("TimeoutId={0}, MessageId={1}", timeoutData.Item1, message.Id);
                     }
 
                     lock (lockObject)

@@ -83,6 +83,8 @@
                 transportMessage.Headers[NServiceBus.Headers.SagaId] = SagaId.ToString();
             }
 
+            transportMessage.Headers["NServiceBus.RelatedTimeoutId"] = Id;
+
             return transportMessage;
         }
         public const string OriginalReplyToAddress = "NServiceBus.Timeout.ReplyToAddress";

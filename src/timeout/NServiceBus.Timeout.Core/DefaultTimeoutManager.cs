@@ -2,6 +2,7 @@
 {
     using System;
     using Unicast.Queuing;
+    using log4net;
 
     public class DefaultTimeoutManager : IManageTimeouts
     {
@@ -15,7 +16,10 @@
         {
             if (timeout.Time.AddSeconds(-1) <= DateTime.UtcNow)
             {
-                MessageSender.Send(timeout.ToTransportMessage(), timeout.Destination);
+                var message = timeout.ToTransportMessage();
+
+                MessageSender.Send(message, timeout.Destination);
+                Logger.DebugFormat("TimeoutId={0}, MessageId={1}", timeout.Id, message.Id);
                 return;
             }
 
@@ -38,5 +42,7 @@
         {
             TimeoutsPersister.RemoveTimeoutBy(sagaId);
         }
+
+        static readonly ILog Logger = LogManager.GetLogger("DebuggingTimeouts");
     }
 }

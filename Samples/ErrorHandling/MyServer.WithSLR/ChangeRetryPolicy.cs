@@ -15,7 +15,7 @@ namespace MyServer
             // For this sample we changed that to retry faster and only 3 times
             SecondLevelRetries.RetryPolicy = (tm) =>
                                                  {
-                                                     if (TransportMessageHelpers.GetNumberOfRetries(tm) >= 1)
+                                                     if (TransportMessageHelpers.GetNumberOfRetries(tm) >= 3)
                                                      {
                                                          // To send back a value less than zero tells the 
                                                          // SecondLevelRetry satellite not to retry this message
@@ -31,7 +31,7 @@ namespace MyServer
                                                      // }
 
                                                      // We will defer this message for 5 seconds, then send it back to the input queue (retry it)
-                                                     return TimeSpan.FromSeconds(5);
+                                                     return TimeSpan.FromSeconds(20);
                                                  };
 
             SecondLevelRetries.TimeoutPolicy = (tm) =>
