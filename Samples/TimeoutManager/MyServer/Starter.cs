@@ -52,11 +52,7 @@ namespace MyServer
 
         void PerformanceTest()
         {
-            var total = 40000;
-            PerformanceTestMessageHandler.receivedMessages = new ConcurrentBag<string>();
-            PerformanceTestMessageHandler.NumExpectedMessages = total;
-            PerformanceTestMessageHandler.TimeStarted = DateTime.UtcNow;
-            System.Threading.Tasks.Parallel.For(0, total, _ => Bus.Defer(TimeSpan.FromMinutes(20), new PerformanceTestMessage()));
+            System.Threading.Tasks.Parallel.For(0, 100, _ => Bus.Defer(TimeSpan.FromSeconds(30), new PerformanceTestMessage()));
         }
 
         void DeferMessage()

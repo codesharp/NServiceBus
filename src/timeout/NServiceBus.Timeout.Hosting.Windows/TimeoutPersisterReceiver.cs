@@ -10,6 +10,7 @@ namespace NServiceBus.Timeout.Hosting.Windows
     public class TimeoutPersisterReceiver
     {
         static readonly ILog Logger = LogManager.GetLogger("TimeoutPersisterReceiver");
+        static readonly ILog Logger2 = LogManager.GetLogger("DebuggingTimeouts");
 
         readonly object lockObject = new object();
 
@@ -82,7 +83,9 @@ namespace NServiceBus.Timeout.Hosting.Windows
                             startSlice = timeoutData.Item2;
                         }
 
-                        MessageSender.Send(CreateTransportMessage(timeoutData.Item1), TimeoutDispatcherProcessor.TimeoutDispatcherAddress);
+                        var message = CreateTransportMessage(timeoutData.Item1);
+                        MessageSender.Send(message, TimeoutDispatcherProcessor.TimeoutDispatcherAddress);
+                        Logger2.DebugFormat("TimeoutId={0}, MessageId={1}, DispatchMessageId={2}", timeoutData.Item1, message.Id, message.IdForCorrelation);
                     }
 
                     lock (lockObject)

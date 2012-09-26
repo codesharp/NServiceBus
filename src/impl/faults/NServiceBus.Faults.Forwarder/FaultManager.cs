@@ -1,9 +1,7 @@
-﻿using Common.Logging;
-using NServiceBus.Utils;
-
-namespace NServiceBus.Faults.Forwarder
+﻿namespace NServiceBus.Faults.Forwarder
 {
 	using System;
+	using Common.Logging;
 	using Unicast.Transport;
     using Unicast.Queuing;
 
@@ -31,6 +29,8 @@ namespace NServiceBus.Faults.Forwarder
         void IManageMessageFailures.Init(Address address)
         {
             localAddress = address;
+            timeoutsDispatcherAddress =  Address.Parse(Configure.EndpointName).SubScope("TimeoutsDispatcher");
+            timeoutManagerAddress = Configure.Instance.GetTimeoutManagerAddress();
         }
 
         void SendFailureMessage(TransportMessage message, Exception e, string reason)
@@ -44,7 +44,10 @@ namespace NServiceBus.Faults.Forwarder
                 // resolution problem in the container
                 var sender = Configure.Instance.Builder.Build<ISendMessages>();
 
-                if (MessageWasSentFromSLR(message) || reason == "SerializationFailed")
+                if (MessageWasSentFromSLR(message) || 
+                    reason == "SerializationFailed" ||
+                    TransportMessageHelpers.GetReplyToAddress(message) == timeoutManagerAddress ||
+                    TransportMessageHelpers.GetReplyToAddress(message) == timeoutsDispatcherAddress)
                 {
                     sender.Send(message, ErrorQueue);
                     return;
@@ -117,7 +120,7 @@ namespace NServiceBus.Faults.Forwarder
 
         Address localAddress;
         static ILog Logger = LogManager.GetLogger("NServiceBus");
-
-
+        private Address timeoutsDispatcherAddress;
+        private Address timeoutManagerAddress;
     }
 }

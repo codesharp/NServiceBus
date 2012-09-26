@@ -31,6 +31,15 @@ namespace MyServer.Common
                             });
                         Console.Out.WriteLine("Done");
                         break;
+
+                    case "o":
+                        Console.Out.Write("Sending...");
+                        
+                        var m2 = new MyMessage { Id = Guid.NewGuid() };
+                        Bus.SendLocal(m2);
+                        
+                        Console.Out.WriteLine("Done");
+                        break;
                 }                
             }
         }

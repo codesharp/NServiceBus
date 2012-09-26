@@ -149,13 +149,18 @@ namespace NServiceBus.Timeout.Hosting.Windows.Persistence
                 timeoutData = session.Load<TimeoutData>(timeoutId);
 
                 if (timeoutData == null)
+                {
+                    Logger2.DebugFormat("TimeoutId={0}, already deleted from raven", timeoutId);
                     return false;
+                }
 
                 timeoutData.Time = DateTime.UtcNow.AddYears(-1);
                 session.SaveChanges();
 
                 session.Delete(timeoutData);
                 session.SaveChanges();
+
+                Logger2.DebugFormat("TimeoutId={0}, deleted from raven", timeoutId);
 
                 return true;
             }
@@ -184,5 +189,6 @@ namespace NServiceBus.Timeout.Hosting.Windows.Persistence
         }
 
         static readonly ILog Logger = LogManager.GetLogger("RavenTimeoutPersistence");
+        static readonly ILog Logger2 = LogManager.GetLogger("DebuggingTimeouts");
     }
 }

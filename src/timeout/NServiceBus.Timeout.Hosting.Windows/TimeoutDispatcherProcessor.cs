@@ -9,9 +9,12 @@ namespace NServiceBus.Timeout.Hosting.Windows
     using Unicast.Queuing.Msmq;
     using Unicast.Transport;
     using Unicast.Transport.Transactional;
+    using log4net;
 
     public class TimeoutDispatcherProcessor : IWantToRunWhenTheBusStarts, IDisposable
     {
+        static readonly ILog Logger = LogManager.GetLogger("DebuggingTimeouts");
+
         TimeoutPersisterReceiver timeoutPersisterReceiver;
         ITransport inputTransport;
 
@@ -64,7 +67,10 @@ namespace NServiceBus.Timeout.Hosting.Windows
 
             if(TimeoutsPersister.TryRemove(timeoutId, out timeoutData))
             {
-                MessageSender.Send(timeoutData.ToTransportMessage(), timeoutData.Destination);
+                var message = timeoutData.ToTransportMessage();
+                MessageSender.Send(message, timeoutData.Destination);
+
+                Logger.DebugFormat("TimeoutId={0}, MessageId={1}, DispatchMessageId={2}", timeoutId, message.Id, message.IdForCorrelation);
             }
         }
 

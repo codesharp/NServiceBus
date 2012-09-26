@@ -17,7 +17,6 @@
 
         public void Handle(PerformanceTestMessage message)
         {
-            receivedMessages.Add(Bus.CurrentMessageContext.Id);
 
             Console.WriteLine(string.Format("Message {0}({1})", receivedMessages.Count, NumExpectedMessages));
 
