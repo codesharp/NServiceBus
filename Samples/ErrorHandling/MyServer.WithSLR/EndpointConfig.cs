@@ -7,8 +7,8 @@ namespace MyServer
         {
             Configure.With()
                 .DefaultBuilder()
-                .UseNHibernateTimeoutPersister();
-                //.UseRavenTimeoutPersister();
+                //.UseNHibernateTimeoutPersister();
+                .UseRavenTimeoutPersister();
         }
     }
 }

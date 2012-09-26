@@ -23,12 +23,13 @@ namespace MyServer.Common
                 switch (cmd)
                 {
                     case "s":
-                        Console.Out.WriteLine("Sending...");
+                        Console.Out.Write("Sending...");
                         Parallel.For(0, 100, i =>
                             {
                                 var m = new MyMessage {Id = Guid.NewGuid()};
                                 Bus.SendLocal(m);
                             });
+                        Console.Out.WriteLine("Done");
                         break;
                 }                
             }

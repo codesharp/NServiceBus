@@ -15,7 +15,7 @@ namespace MyServer
             // For this sample we changed that to retry faster and only 3 times
             SecondLevelRetries.RetryPolicy = (tm) =>
                                                  {
-                                                     if (TransportMessageHelpers.GetNumberOfRetries(tm) >= 3)
+                                                     if (TransportMessageHelpers.GetNumberOfRetries(tm) >= 1)
                                                      {
                                                          // To send back a value less than zero tells the 
                                                          // SecondLevelRetry satellite not to retry this message
