@@ -3,45 +3,74 @@ using NServiceBus;
 
 namespace MyServer.Common
 {
+    using System.Diagnostics;
+    using System.IO;
+    using System.Security;
+    using System.Security.Permissions;
+    using System.Threading;
     using System.Threading.Tasks;
+    using System.Windows.Forms;
 
-    public class Application : IWantToRunAtStartup
+    public class Startup : IWantToRunAtStartup
     {
         public IBus Bus { get; set; }        
 
         public void Run()
-        {            
-            Console.WriteLine("Press 'S' to send a message that will throw an exception.");            
-            Console.WriteLine("Press 'Q' to exit.");            
-                        
-            string cmd;
+        {
+            if (!File.Exists("crashed.txt") && File.Exists("log.txt"))
+            {
+                File.Copy("log.txt", string.Format("log{0:ddMMYYYYHHmmfff}.txt", DateTime.Now));
+                File.Delete("log.txt");
+            }
 
-            while ((cmd = Console.ReadKey().Key.ToString().ToLower()) != "q")            
+            while (true)            
             {
                 Console.WriteLine("");
 
-                switch (cmd)
-                {
-                    case "s":
-                        Console.Out.Write("Sending...");
-                        Parallel.For(0, 100, i =>
-                            {
-                                var m = new MyMessage {Id = Guid.NewGuid()};
-                                Bus.SendLocal(m);
-                            });
-                        Console.Out.WriteLine("Done");
-                        break;
+                Console.Out.Write("Sending 50...");
+                Parallel.For(0, 50, i =>
+                    {
+                        var m = new MyMessage {Id = Guid.NewGuid()};
+                        Bus.SendLocal(m);
+                    });
+                Console.Out.WriteLine("Done");
 
-                    case "o":
-                        Console.Out.Write("Sending...");
-                        
-                        var m2 = new MyMessage { Id = Guid.NewGuid() };
-                        Bus.SendLocal(m2);
-                        
-                        Console.Out.WriteLine("Done");
-                        break;
-                }                
+                if (File.Exists("crashed.txt"))
+                {
+                    File.Delete("crashed.txt");
+
+                    Console.Out.WriteLine("Going to run to the end");
+
+                    break;
+                }
+
+                Console.Out.WriteLine("Waiting for 20 seconds before sending another batch of messages");
+                Thread.Sleep(TimeSpan.FromSeconds(20)); //Waiting 18 seconds before sending another batch of messages
+
+                Console.Out.Write("Sending another 50...");
+                Parallel.For(0, 50, i =>
+                {
+                    var m = new MyMessage { Id = Guid.NewGuid() };
+                    Bus.SendLocal(m);
+                });
+                Console.Out.WriteLine("Done");
+
+                Console.Out.WriteLine("Going to crash soon.");
+                File.WriteAllText("crashed.txt", String.Empty);
+                Thread.Sleep(5300);
+                Restart();
             }
+        }
+
+        private void Restart()
+        {
+            var currentStartInfo = Process.GetCurrentProcess().StartInfo;
+            currentStartInfo.FileName = Application.ExecutablePath;
+
+            Console.Out.WriteLine(Application.ExecutablePath);
+            Process.Start(currentStartInfo);
+
+            Environment.FailFast("boom...");
         }
 
         public void Stop()

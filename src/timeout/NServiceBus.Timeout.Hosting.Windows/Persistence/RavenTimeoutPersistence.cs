@@ -150,7 +150,7 @@ namespace NServiceBus.Timeout.Hosting.Windows.Persistence
 
                 if (timeoutData == null)
                 {
-                    Logger2.DebugFormat("TimeoutId={0}, already deleted from raven", timeoutId);
+                    Logger2.DebugFormat("{0}\t{1}\t\t\tAlready deleted from raven", "RavenTimeoutPersistence", timeoutId );
                     return false;
                 }
 
@@ -160,7 +160,7 @@ namespace NServiceBus.Timeout.Hosting.Windows.Persistence
                 session.Delete(timeoutData);
                 session.SaveChanges();
 
-                Logger2.DebugFormat("TimeoutId={0}, deleted from raven", timeoutId);
+                Logger2.DebugFormat("{0}\t{1}\t\t\tDeleted from raven", "RavenTimeoutPersistence", timeoutId);
 
                 return true;
             }

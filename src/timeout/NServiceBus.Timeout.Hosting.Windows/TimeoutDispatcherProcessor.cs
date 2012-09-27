@@ -70,7 +70,7 @@ namespace NServiceBus.Timeout.Hosting.Windows
                 var message = timeoutData.ToTransportMessage();
                 MessageSender.Send(message, timeoutData.Destination);
 
-                Logger.DebugFormat("TimeoutId={0}, MessageId={1}, DispatchMessageId={2}", timeoutId, message.Id, transportMessage.Id);
+                Logger.DebugFormat("{0}\t{1}\t{2}\t{3}\t", "TimeoutDispatcherProcessor", timeoutId, message.Id, transportMessage.Id);
             }
         }
 

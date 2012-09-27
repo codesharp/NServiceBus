@@ -19,7 +19,7 @@
                 var message = timeout.ToTransportMessage();
 
                 MessageSender.Send(message, timeout.Destination);
-                Logger.DebugFormat("TimeoutId={0}, MessageId={1}", timeout.Id, message.Id);
+                Logger.DebugFormat("{0}\t{1}\t{2}\t\t", "DefaultTimeoutManager", timeout.Id, message.Id);
                 return;
             }
 
